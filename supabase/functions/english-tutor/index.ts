@@ -25,13 +25,34 @@ serve(async (req) => {
     // Route: Get pronunciation practice phrase
     if (body.get_pronunciation_phrase) {
       const completion = await openAI.chat.completions.create({
-          model: 'gpt-4o',
-          messages: [{ 
-            role: 'system', 
-            content: "Provide a single, simple, and common English sentence for pronunciation practice, suitable for an A2-B1 level learner. Just the sentence, no quotes." 
-          }],
+        model: 'gpt-4o',
+        messages: [{ 
+          role: 'system', 
+          content: `Generate a RANDOM, LONG and SIMPLE English sentence for pronunciation practice with:
+          1. ONLY basic vocabulary (A1-A2 level)
+          2. 12-18 words long
+          3. Extremely random topics (mix everyday objects with unexpected verbs)
+          4. Weird but grammatically correct combinations
+          5. NO repetition from previous sentences
+          6. Structure: Subject + unusual verb + object + place/time
+          
+          Examples:
+          - "The sleepy banana dances with a purple clock under the rainbow bridge."
+          - "My giant spoon is singing opera songs in the quiet library."
+          - "Ten fluffy clouds are playing chess on top of a tiny mountain."
+          
+          Respond ONLY with the sentence, NO additional text or quotes.` 
+        }],
+        temperature: 1.2, 
+        top_p: 0.9,
+        frequency_penalty: 0.7, 
+        presence_penalty: 0.7, 
       });
-      const phrase = completion.choices[0].message.content?.trim();
+      
+      const phrase = completion.choices[0].message.content?.trim()
+        .replace(/^"+|"+$/g, '') // Remove quotes se o modelo adicionar
+        .replace(/\.$/, ''); // Remove ponto final se existir
+
       return new Response(JSON.stringify({ phrase }), { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       });

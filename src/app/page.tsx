@@ -309,7 +309,29 @@ export default function Home() {
                       <>
                         {/* Exercise-specific content */}
                         {activeModal === 'pronunciation' && (
-                          <p>Repeat after me: <b className="text-blue-600">"{pronunciationPhrase}"</b></p>
+                          <div className="mb-4 text-center">
+                            <p>Repeat after me: <b className="text-blue-600">"{pronunciationPhrase}"</b></p>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="mt-2"
+                              onClick={async () => {
+                                setIsContentLoading(true);
+                                try {
+                                  const phrase = await fetchPronunciationPhrase();
+                                  setPronunciationPhrase(phrase);
+                                } catch (error) {
+                                  console.error(error);
+                                } finally {
+                                  setIsContentLoading(false);
+                                }
+                              }}
+                              disabled={isContentLoading}
+                            >
+                              <RefreshCw className="mr-2 h-4 w-4" />
+                              New Phrase
+                            </Button>
+                          </div>
                         )}
                         {activeModal === 'vocabulary' && (
                           <p>Use the word "<b className="text-blue-600">{vocabularyWord.word}</b>" in a sentence. 
