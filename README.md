@@ -1,4 +1,4 @@
-# Echo: AI English Tutor 🗣️✨
+# Echo: AI English Tutor 
 
 Echo is an interactive web application designed to help users practice and improve their English speaking skills through a series of engaging, AI-powered exercises. Instead of a simple chatbot, Echo acts as a personal tutor, providing instant feedback on pronunciation, grammar, and vocabulary in context.
 
@@ -8,7 +8,7 @@ Echo is an interactive web application designed to help users practice and impro
 
 <br>
 
-## ✨ Features
+## Features
 
 * 🎙️ **Conversation Practice:** Engage in open-ended conversation and receive grammatical corrections and suggestions.
 * 🔊 **Pronunciation Guide:** Repeat specific phrases and get targeted feedback to improve your accent.
@@ -19,7 +19,7 @@ Echo is an interactive web application designed to help users practice and impro
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 This project leverages a modern, full-stack architecture to deliver a seamless and powerful user experience.
 
