@@ -215,8 +215,8 @@ serve(async (req) => {
     // Generate audio for corrected phrase
     const ttsResponse = await openAI.audio.speech.create({ 
       model: "tts-1", 
-      voice: "nova", 
-      input: correctedPhrase, 
+      voice: "fable", 
+      input: correctedPhrase,
       response_format: "mp3" 
     });
     

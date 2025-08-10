@@ -223,23 +223,22 @@ export default function Home() {
       setResult(analysis);
       
       // Save non-image results to Supabase
-      if (activeModal !== 'image') {
-        await saveAnalysisToSupabase({
-            original_phrase: analysis.originalPhrase,
-            corrected_phrase: analysis.correctedPhrase,
-            feedback: analysis.feedback,
-            original_audio_base64: audioBase64,
-            corrected_audio_base64: analysis.correctedAudioBase64,
-            practice_type: activeModal as string,
-        });
-      }
+      await saveAnalysisToSupabase({
+        original_phrase: analysis.originalPhrase,
+        corrected_phrase: activeModal === 'image' ? analysis.description : analysis.correctedPhrase,
+        feedback: activeModal === 'image' ? "Image description exercise" : analysis.feedback,
+        original_audio_base64: audioBase64,
+        corrected_audio_base64: activeModal === 'image' ? "" : analysis.correctedAudioBase64,
+        practice_type: activeModal as string,
+      });
+
     } catch (error: any) {
-        console.error('Error in handleAnalyze:', error);
-        setResult({ 
-          error: "We encountered an issue processing your request. Please try again." 
-        });
+      console.error('Error in handleAnalyze:', error);
+      setResult({ 
+        error: "We encountered an issue processing your request. Please try again." 
+      });
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
