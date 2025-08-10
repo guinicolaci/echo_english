@@ -4,9 +4,8 @@ Echo is an interactive web application designed to help users practice and impro
 
 <br>
 
-[![View Live Site](https://img.shields.io/badge/🌐%20View%20Live%20Site-informational)](https://echo-english-three.vercel.app/)
+[![Vercel](https://img.shields.io/badge/Visit-Live_Demo-blue?style=for-the-badge&logo=vercel)](https://echo-english-three.vercel.app/)
 
-<br>
 
 ## Features
 
