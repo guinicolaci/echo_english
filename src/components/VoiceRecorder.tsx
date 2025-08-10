@@ -1,4 +1,3 @@
-// src/components/VoiceRecorder.tsx
 'use client';
 
 import React, { useState, useRef } from 'react';
@@ -34,7 +33,6 @@ export default function VoiceRecorder({ onRecordingComplete, isLoading }: VoiceR
           const base64String = (reader.result as string).split(',')[1];
           onRecordingComplete(base64String);
         };
-         // Parar as faixas de mídia para desligar o indicador do microfone
         stream.getTracks().forEach(track => track.stop());
       };
 

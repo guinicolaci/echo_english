@@ -1,24 +1,45 @@
-// src/app/page.tsx
-'use client'
+'use client' // Marks this as a Client Component in Next.js 13+
 
 import React, { useState } from 'react';
+// Component imports
 import HistoryDialog from '@/components/HistoryDialog';
 import VoiceRecorder from '@/components/VoiceRecorder';
+// UI component imports from Shadcn
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+// Icon imports from Lucide
 import { History, RefreshCw } from 'lucide-react';
-import { fetchPronunciationPhrase, fetchVocabularyWord, fetchRandomImage, analyzeGrammar, saveAnalysisToSupabase } from '@/lib/supabase';
+// Utility functions for Supabase operations
+import { 
+  fetchPronunciationPhrase, 
+  fetchVocabularyWord, 
+  fetchRandomImage, 
+  analyzeGrammar, 
+  saveAnalysisToSupabase 
+} from '@/lib/supabase';
 
+/**
+ * AnalysisResult Component
+ * Displays the results of speech analysis in different formats based on exercise type
+ * 
+ * @param result - Analysis data from AI
+ * @param onPlayAudio - Callback to play corrected audio
+ * @param onRetry - Callback to retry recording
+ * @param type - Exercise type (image, pronunciation, etc)
+ * @param onNewImage - Special callback for image exercises
+ */
 const AnalysisResult = ({ result, onPlayAudio, onRetry, type, onNewImage }: any) => (
   <div className="text-left">
     {result.error ? (
+      // Error display UI
       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
         <p className="font-medium text-red-800">An error occurred</p>
         <p className="text-red-700 mt-1">{result.error}</p>
         <Button className="mt-4 w-full" onClick={onRetry}>Try Again</Button>
       </div>
     ) : type === 'image' ? (
+      // Image description exercise results
       <div className="space-y-4">
         <div className="mb-4">
           <h3 className="font-medium mb-2">You said:</h3>
@@ -57,6 +78,7 @@ const AnalysisResult = ({ result, onPlayAudio, onRetry, type, onNewImage }: any)
         </div>
       </div>
     ) : (
+      // Grammar/pronunciation exercise results
       <>
         <div className="mb-4"><h3 className="font-medium mb-2">You said:</h3><div className="bg-gray-50 rounded-lg p-4"><p className="text-gray-700">{result.originalPhrase}</p></div></div>
         <div className="mb-4"><h3 className="font-medium mb-2">Improved version:</h3><div className="bg-green-50 border border-green-200 rounded-lg p-4"><p className="text-green-800 font-medium">{result.correctedPhrase}</p></div></div>
@@ -67,30 +89,62 @@ const AnalysisResult = ({ result, onPlayAudio, onRetry, type, onNewImage }: any)
   </div>
 );
 
+/**
+ * Main Page Component
+ * The home screen of the application showing exercise options
+ */
 export default function Home() {
-  const [activeModal, setActiveModal] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isContentLoading, setIsContentLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
-  const [showHistory, setShowHistory] = useState(false);
+  // State management
+  const [activeModal, setActiveModal] = useState<string | null>(null);  // Currently active exercise type
+  const [isLoading, setIsLoading] = useState(false);                   // Loading state during analysis
+  const [isContentLoading, setIsContentLoading] = useState(false);     // Loading state for exercise content
+  const [result, setResult] = useState<any>(null);                     // Analysis results
+  const [showHistory, setShowHistory] = useState(false);               // Controls history dialog visibility
   
-  const [pronunciationPhrase, setPronunciationPhrase] = useState('');
-  const [vocabularyWord, setVocabularyWord] = useState({ word: '', definition: '' });
-  const [imageData, setImageData] = useState({ url: '', photographer: '', link: '' });
+  // Exercise-specific states
+  const [pronunciationPhrase, setPronunciationPhrase] = useState('');       // Current pronunciation phrase
+  const [vocabularyWord, setVocabularyWord] = useState({ word: '', definition: '' });  // Current vocabulary word
+  const [imageData, setImageData] = useState({ url: '', photographer: '', link: '' });  // Current image data
 
+  // Exercise configuration data
   const exercises = [
-    { type: 'conversation', title: 'Conversation Practice', description: 'Practice speaking in realistic dialogues.', icon: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" },
-    { type: 'pronunciation', title: 'Pronunciation Guide', description: 'Improve your accent with AI feedback on specific phrases.', icon: "M3 10v4M9 8v8M15 5v14M21 10v4" },
-    { type: 'vocabulary', title: 'Vocabulary in Context', description: 'Learn new words by using them in your own sentences.', icon: "M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" },
-    { type: 'image', title: 'Image Description', description: 'Describe what you see in an image to practice fluency.', icon: "m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0v0Z" },
+    { 
+      type: 'conversation', 
+      title: 'Conversation Practice', 
+      description: 'Practice speaking in realistic dialogues.', 
+      icon: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" 
+    },
+    { 
+      type: 'pronunciation', 
+      title: 'Pronunciation Guide', 
+      description: 'Improve your accent with AI feedback on specific phrases.', 
+      icon: "M3 10v4M9 8v8M15 5v14M21 10v4" 
+    },
+    { 
+      type: 'vocabulary', 
+      title: 'Vocabulary in Context', 
+      description: 'Learn new words by using them in your own sentences.', 
+      icon: "M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" 
+    },
+    { 
+      type: 'image', 
+      title: 'Image Description', 
+      description: 'Describe what you see in an image to practice fluency.', 
+      icon: "m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0v0Z" 
+    },
   ];
 
+  /**
+   * Handles card click to open an exercise modal
+   * @param modalType - The type of exercise selected
+   */
   const handleCardClick = async (modalType: string) => {
     setActiveModal(modalType);
     setResult(null);
     setIsContentLoading(true);
 
     try {
+      // Fetch exercise-specific content
       if (modalType === 'pronunciation') {
         setPronunciationPhrase('Loading a new phrase...');
         const phrase = await fetchPronunciationPhrase();
@@ -112,6 +166,7 @@ export default function Home() {
     }
   };
 
+  /** Fetches a new image for image description exercises */
   const handleNewImage = async () => {
     setResult(null);
     setIsContentLoading(true);
@@ -128,16 +183,22 @@ export default function Home() {
     }
   };
 
+  /**
+   * Handles audio analysis after recording
+   * @param audioBase64 - Recorded audio in base64 format
+   */
   const handleAnalyze = async (audioBase64: string) => {
     setIsLoading(true);
     let targetData;
     let imageUrl;
     
+    // Set context data based on exercise type
     if (activeModal === 'pronunciation') targetData = pronunciationPhrase;
     if (activeModal === 'vocabulary') targetData = vocabularyWord.word;
     if (activeModal === 'image') imageUrl = imageData.url;
 
     try {
+      // Send audio to OpenAI for analysis
       const { data: analysis, error } = await analyzeGrammar(
         audioBase64, 
         activeModal!, 
@@ -152,6 +213,7 @@ export default function Home() {
         return;
       }
 
+      // Validate image analysis response
       if (activeModal === 'image') {
         if (!analysis.description || !analysis.vocabulary) {
           throw new Error("Invalid response from AI");
@@ -160,6 +222,7 @@ export default function Home() {
 
       setResult(analysis);
       
+      // Save non-image results to Supabase
       if (activeModal !== 'image') {
         await saveAnalysisToSupabase({
             original_phrase: analysis.originalPhrase,
@@ -180,6 +243,7 @@ export default function Home() {
     }
   };
 
+  /** Plays audio from base64 encoded string */
   const playAudio = (base64: string) => { 
     const audio = new Audio(`data:audio/mp3;base64,${base64}`); 
     audio.play(); 
@@ -187,17 +251,27 @@ export default function Home() {
 
   return (
     <div className="container mx-auto px-4 py-12">
+      {/* History Dialog Component */}
       <HistoryDialog open={showHistory} onOpenChange={setShowHistory} />
+      
       <div className="max-w-4xl mx-auto">
+        {/* Header Section */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl lg:text-5xl font-bold mb-4">Refine your English with Echo</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">Your personal AI English teacher, available anytime. Choose an exercise to get started.</p>
+          <h2 className="text-4xl lg:text-5xl mb-4">Refine your English with Echo</h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Your personal AI English teacher, available anytime. Choose an exercise to get started.
+          </p>
         </div>
         
+        {/* Exercise Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
           {exercises.map((exercise) => (
-            <Dialog key={exercise.type} onOpenChange={(open) => { if (!open) setResult(null); }}>
+            <Dialog 
+              key={exercise.type} 
+              onOpenChange={(open) => { if (!open) setResult(null); }}
+            >
               <DialogTrigger asChild onClick={() => handleCardClick(exercise.type)}>
+                {/* Exercise Card */}
                 <Card className="h-full flex flex-col items-center text-center cursor-pointer hover:shadow-lg transition-shadow duration-300 group">
                   <CardHeader className="flex flex-col items-center gap-4 w-full">
                     <div className="w-10 h-10 rounded-full bg-black flex-shrink-0 flex items-center justify-center group-hover:bg-gray-800 transition-colors">
@@ -210,7 +284,7 @@ export default function Home() {
                         strokeWidth="1.5" 
                         strokeLinecap="round" 
                         strokeLinejoin="round"
-                        className="mx-auto" // Centraliza o SVG dentro do círculo
+                        className="mx-auto"
                       >
                         <path d={exercise.icon} />
                       </svg>
@@ -222,23 +296,41 @@ export default function Home() {
                   </CardContent>
                 </Card>
               </DialogTrigger>
+              
+              {/* Exercise Modal */}
               <DialogContent className="sm:max-w-[625px] max-h-[90vh] overflow-y-auto">
-                <DialogHeader><DialogTitle className="text-2xl text-center">{exercise.title}</DialogTitle></DialogHeader>
+                <DialogHeader>
+                  <DialogTitle className="text-2xl text-center">{exercise.title}</DialogTitle>
+                </DialogHeader>
                 <div className="py-4">
                   <div className="mb-6 text-center min-h-[120px] flex flex-col justify-center">
                     {isContentLoading ? (
                       <p className="text-gray-500">Loading exercise...</p>
                     ) : (
                       <>
-                        {activeModal === 'pronunciation' && (<p>Repeat after me: <b className="text-blue-600">"{pronunciationPhrase}"</b></p>)}
-                        {activeModal === 'vocabulary' && (<p>Use the word "<b className="text-blue-600">{vocabularyWord.word}</b>" in a sentence. <span className="text-gray-500">({vocabularyWord.definition})</span></p>)}
+                        {/* Exercise-specific content */}
+                        {activeModal === 'pronunciation' && (
+                          <p>Repeat after me: <b className="text-blue-600">"{pronunciationPhrase}"</b></p>
+                        )}
+                        {activeModal === 'vocabulary' && (
+                          <p>Use the word "<b className="text-blue-600">{vocabularyWord.word}</b>" in a sentence. 
+                          <span className="text-gray-500">({vocabularyWord.definition})</span></p>
+                        )}
                         {activeModal === 'image' && (
                           <div className="space-y-4">
                             {imageData.url ? (
                               <>
-                                <img src={imageData.url} alt="A random scene for English description practice" className="rounded-lg shadow-md" />
+                                <img 
+                                  src={imageData.url} 
+                                  alt="A random scene for English description practice" 
+                                  className="rounded-lg shadow-md" 
+                                />
                                 <p className="text-center font-semibold mt-4">Describe this image in detail.</p>
-                                <p className="text-xs text-center text-gray-500 !mt-2">Photo by <a href={imageData.link} target="_blank" rel="noopener noreferrer" className="underline">{imageData.photographer}</a> on Unsplash</p>
+                                <p className="text-xs text-center text-gray-500 !mt-2">
+                                  Photo by <a href={imageData.link} target="_blank" rel="noopener noreferrer" className="underline">
+                                    {imageData.photographer}
+                                  </a> on Unsplash
+                                </p>
                               </>
                             ) : (
                               <div className="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center animate-pulse">
@@ -247,11 +339,20 @@ export default function Home() {
                             )}
                           </div>
                         )}
-                        {activeModal === 'conversation' && (<p>Let's have a conversation! Tell me about your day.</p>)}
+                        {activeModal === 'conversation' && (
+                          <p>Let's have a conversation! Tell me about your day.</p>
+                        )}
                       </>
                     )}
                   </div>
-                  {!isContentLoading && !result && (<VoiceRecorder onRecordingComplete={handleAnalyze} isLoading={isLoading}/>)}
+                  
+                  {/* Voice Recorder or Results Display */}
+                  {!isContentLoading && !result && (
+                    <VoiceRecorder 
+                      onRecordingComplete={handleAnalyze} 
+                      isLoading={isLoading}
+                    />
+                  )}
                   {result && (
                     <AnalysisResult 
                       result={result} 
@@ -267,6 +368,7 @@ export default function Home() {
           ))}
         </div>
 
+        {/* History Section */}
         <div className="text-center border-t pt-12">
             <h3 className="text-2xl font-light mb-6">Review Your Progress</h3>
             <div className="max-w-md mx-auto">

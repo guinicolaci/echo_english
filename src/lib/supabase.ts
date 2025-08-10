@@ -1,4 +1,3 @@
-// src/lib/supabase.ts
 import { createBrowserClient } from '@supabase/ssr'
 import { v4 as uuidv4 } from 'uuid';
 
