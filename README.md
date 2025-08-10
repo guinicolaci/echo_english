@@ -2,7 +2,11 @@
 
 Echo is an interactive web application designed to help users practice and improve their English speaking skills through a series of engaging, AI-powered exercises. Instead of a simple chatbot, Echo acts as a personal tutor, providing instant feedback on pronunciation, grammar, and vocabulary in context.
 
+<br>
 
+[![View Live Site](https://img.shields.io/badge/🌐%20View%20Live%20Site-informational)](https://echo-english-three.vercel.app/)
+
+<br>
 
 ## ✨ Features
 
