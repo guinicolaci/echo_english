@@ -28,20 +28,20 @@ serve(async (req) => {
         model: 'gpt-4o',
         messages: [{ 
           role: 'system', 
-          content: `Generate a RANDOM, LONG and SIMPLE English sentence for pronunciation practice with:
-          1. ONLY basic vocabulary (A1-A2 level)
-          2. 12-18 words long
-          3. Extremely random topics (mix everyday objects with unexpected verbs)
-          4. Weird but grammatically correct combinations
-          5. NO repetition from previous sentences
-          6. Structure: Subject + unusual verb + object + place/time
-          
-          Examples:
-          - "The sleepy banana dances with a purple clock under the rainbow bridge."
-          - "My giant spoon is singing opera songs in the quiet library."
-          - "Ten fluffy clouds are playing chess on top of a tiny mountain."
-          
-          Respond ONLY with the sentence, NO additional text or quotes.` 
+          content: `Generate a SIMPLE English sentence for pronunciation practice about everyday life or technology with:
+         1. ONLY basic vocabulary (A1-A2 level), including common IT words.
+         2. 12-18 words long.
+         3. Topics about common daily routines or simple tech tasks.
+         4. A natural and grammatically correct structure.
+         5. NO repetition from previous sentences.
+         6. Structure: Subject + verb + object + place/time.
+         
+         Examples:
+         - "He needs to charge his new phone before he goes to the office."
+         - "My sister is watching a video about cooking on her tablet in the kitchen."
+         - "I always check my email when I turn on my computer in the morning."
+         
+         Respond ONLY with the sentence, NO additional text or quotes.`
         }],
         temperature: 1.2, 
         top_p: 0.9,

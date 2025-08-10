@@ -317,6 +317,7 @@ export default function Home() {
                               className="mt-2"
                               onClick={async () => {
                                 setIsContentLoading(true);
+                                setResult(null);
                                 try {
                                   const phrase = await fetchPronunciationPhrase();
                                   setPronunciationPhrase(phrase);
