@@ -2,6 +2,9 @@
 
 Echo is an interactive web application designed to help users practice and improve their English speaking skills through a series of engaging, AI-powered exercises. Instead of a simple chatbot, Echo acts as a personal tutor, providing instant feedback on pronunciation, grammar, and vocabulary in context.
 
+🔴 Important Notice: The default OpenAI API key has been deactivated.
+To use Echo, your own API key is required.
+
 <br>
 
 <a href="https://echo-english-three.vercel.app/" target="_blank" rel="noopener noreferrer">
